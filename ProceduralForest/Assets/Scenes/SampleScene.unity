@@ -396,6 +396,7 @@ GameObject:
   - component: {fileID: 698523173}
   - component: {fileID: 698523174}
   - component: {fileID: 698523175}
+  - component: {fileID: 698523176}
   m_Layer: 0
   m_Name: ForestGenerator
   m_TagString: Untagged
@@ -488,7 +489,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 698523170}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1414e188a3ca0bc40898b668816553d6, type: 3}
   m_Name: 
@@ -499,6 +500,30 @@ MonoBehaviour:
   noiseScale: 0.03
   densityThreshold: 0.6
   octaves: 3
+  seed: 42
+  minTreeScale: 0.8
+  maxTreeScale: 1.2
+--- !u!114 &698523176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698523170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ce06b3b288f0e646abe098ada21caef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MasterForestGenerator
+  terrain: {fileID: 1190097323}
+  treePrefab: {fileID: 115084, guid: 7c5aafe3fe2c6ef4a9150f7f44653760, type: 3}
+  noiseType: 1
+  candidateCount: 1000
+  noiseScale: 0.03
+  densityThreshold: 0.45
+  octaves: 4
+  persistence: 0.5
+  lacunarity: 2
   seed: 42
   minTreeScale: 0.8
   maxTreeScale: 1.2
