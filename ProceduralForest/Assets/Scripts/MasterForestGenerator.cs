@@ -10,7 +10,7 @@ public class MasterForestGenerator : MonoBehaviour
         Cellular,
         RidgedMultifractal
     }
-    //forest setup section in the inspector
+    //headders and inputs
     [Header("Forest Setup")]
     public Terrain terrain;
     public GameObject treePrefab;
@@ -42,6 +42,9 @@ public class MasterForestGenerator : MonoBehaviour
     public float minTreeScale = 0.8f;
     [Range(0.5f, 2f)]
     public float maxTreeScale = 1.2f;
+
+    [Header("Tree Spacing")]
+    public float minTreeDistance = 2f;
 
     private void Start()
     {
@@ -76,9 +79,9 @@ public class MasterForestGenerator : MonoBehaviour
             Vector3 position = terrain.transform.position + new Vector3(x, 0f, z);
             position.y = terrain.SampleHeight(position) + terrain.transform.position.y;
 
-            
+
+
             //shared rules 
-            
 
             // Sample the selected noise type
             float noiseValue = SampleSelectedNoise(position.x * noiseScale, position.z * noiseScale);
@@ -90,6 +93,28 @@ public class MasterForestGenerator : MonoBehaviour
 
             if (shouldSkip)
                 continue;
+
+            // Check if the position is too close to existing trees
+            bool tooClose = false;
+
+            // Loop through the trees that have already been generated
+            foreach (Transform treePrefab in transform)
+            {
+                // Calculate the distance between the candidate position and existing tree positions
+                float distance = Vector3.Distance(position, treePrefab.position);
+
+                // If the trees are closer than the minimum distance, reject this position
+                if (distance < minTreeDistance)
+                {
+                    tooClose = true;
+                    break;
+                }
+            }
+            // Skip this position if another tree is already too close
+            if (tooClose)
+            {
+                continue;
+            }
 
             float rotation = (float)random.NextDouble() * 360f;// random rotation for the tree to make it look more natural
             float scale = Mathf.Lerp(minTreeScale, maxTreeScale, (float)random.NextDouble());// random scale for the tree to make it look more natural
@@ -126,7 +151,8 @@ public class MasterForestGenerator : MonoBehaviour
 
     //calculate the Fractional Brownian Motion noise value at a given position using Perlin noise
     float CalculateFBM(float x, float z)
-    {   //initialize total, frequency, amplitude, and maxValue 
+    {  
+        //initialize total, frequency, amplitude, and maxValue 
         float total = 0f;
         float frequency = 1f;
         float amplitude = 1f;
@@ -135,6 +161,8 @@ public class MasterForestGenerator : MonoBehaviour
         for (int i = 0; i < octaves; i++)
         {  //sampiling perlin noise gets a smooth value and multiplyes it by x and z
             total += Mathf.PerlinNoise(x * frequency, z * frequency) * amplitude;
+
+
             maxValue += amplitude; //add current layer ampliitude to max volume
             amplitude *= persistence; //shrinks the amplitude to get rid of small values
             frequency *= lacunarity;
@@ -145,7 +173,8 @@ public class MasterForestGenerator : MonoBehaviour
 
     //calculate the Cellular noise value at a given position using a simple distance-based approach
     float CalculateCellular(float x, float z)
-    { //determans which integer grid cell value for any given x,z coordinate
+    { 
+        //determans which integer grid cell value for any given x,z coordinate
         int intX = Mathf.FloorToInt(x);
         int intZ = Mathf.FloorToInt(z);
         float minDist = 1.0f;
